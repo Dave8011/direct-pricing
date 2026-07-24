@@ -5,13 +5,13 @@ const chromium = require('@sparticuz/chromium');
 const formidable = require('formidable');
 
 // Disable Vercel's default body parser so formidable can process the multipart/form-data
-export const config = {
+module.exports.config = {
   api: {
     bodyParser: false,
   },
 };
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
