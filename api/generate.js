@@ -1,10 +1,16 @@
-const { parseCSV } = require('../parser');
-const { renderFullHTML } = require('../templates/page');
-const puppeteer = require('puppeteer-core');
-const chromium = require('@sparticuz/chromium');
-const formidable = require('formidable');
+let parseCSV, renderFullHTML, puppeteer, chromium, formidable;
+let initError = null;
 
-// Disable Vercel's default body parser so formidable can process the multipart/form-data
+try {
+  parseCSV = require('../parser').parseCSV;
+  renderFullHTML = require('../templates/page').renderFullHTML;
+  puppeteer = require('puppeteer-core');
+  chromium = require('@sparticuz/chromium');
+  formidable = require('formidable').formidable; // v3 uses .formidable
+} catch (e) {
+  initError = e;
+}
+
 module.exports.config = {
   api: {
     bodyParser: false,
@@ -12,6 +18,10 @@ module.exports.config = {
 };
 
 module.exports = async function handler(req, res) {
+  if (initError) {
+    return res.status(500).json({ error: 'Init Error: ' + initError.message, stack: initError.stack });
+  }
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
