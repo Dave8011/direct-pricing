@@ -1,10 +1,9 @@
-let parseCSV, renderFullHTML, puppeteer, chromium, formidable;
+let parseCSV, renderFullHTML, chromium, formidable;
 let initError = null;
 
 try {
   parseCSV = require('../parser').parseCSV;
   renderFullHTML = require('../templates/page').renderFullHTML;
-  puppeteer = require('puppeteer-core');
   chromium = require('@sparticuz/chromium');
   formidable = require('formidable').formidable; // v3 uses .formidable
 } catch (e) {
@@ -57,6 +56,9 @@ module.exports = async function handler(req, res) {
 
     // 2. Render HTML
     const htmlContent = renderFullHTML(categories, monthYear);
+
+    // Dynamic import for puppeteer-core because it's an ES Module
+    const puppeteer = await import('puppeteer-core').then(m => m.default || m);
 
     // 3. Launch Puppeteer in Vercel environment
     // @sparticuz/chromium automatically manages the Chromium binary download/execution
