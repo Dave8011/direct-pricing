@@ -76,8 +76,8 @@ module.exports = async function handler(req, res) {
     // Set HTML content directly in memory (no temp files needed)
     await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
 
-    // 4. Generate PDF buffer
-    const pdfBuffer = await page.pdf({
+    // 4. Generate PDF buffer (Puppeteer returns Uint8Array in newer versions)
+    const pdfUint8Array = await page.pdf({
       format: 'A4',
       printBackground: true,
       margin: { top: '0px', right: '0px', bottom: '0px', left: '0px' }
@@ -85,11 +85,14 @@ module.exports = async function handler(req, res) {
 
     await browser.close();
 
+    // Ensure it's a Node Buffer so Vercel doesn't stringify it
+    const pdfBuffer = Buffer.from(pdfUint8Array);
+
     // 5. Send PDF as response
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', 'attachment; filename="Generated_Pricelist.pdf"');
     res.setHeader('Content-Length', pdfBuffer.length);
-    return res.status(200).send(pdfBuffer);
+    return res.end(pdfBuffer);
 
   } catch (error) {
     console.error('Error generating PDF:', error);
