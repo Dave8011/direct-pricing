@@ -21,6 +21,7 @@ const generateCoverPage = (monthYear) => {
       <div class="cover-top-bar">
         <div class="brand-logo-container">
           <img src="${pureTreeLogo}" alt="Pure Tree Logo" class="brand-logo-img" />
+          <span class="organic-pill">100% CERTIFIED ORGANIC</span>
         </div>
         <div class="price-list-box">
           <div class="pl-small">PRICE LIST</div>

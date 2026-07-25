@@ -55,12 +55,12 @@ const getStyles = () => `
   .brand-logo-container {
     display: flex;
     align-items: center;
-    gap: 18px;
+    gap: 12px;
   }
 
   .brand-logo-img {
-    height: 85px; /* Increased logo size */
-    width: 260px; 
+    height: 80px; /* Slightly reduced to save space */
+    width: 240px; 
     object-fit: contain;
     object-position: left center;
   }
@@ -68,21 +68,25 @@ const getStyles = () => `
   .organic-pill {
     background: linear-gradient(135deg, #134226 0%, #1b5833 100%);
     color: #ffffff;
-    padding: 7px 16px;
+    padding: 7px 12px;
     border-radius: 20px;
-    font-size: 10.5px;
+    font-size: 10px;
     font-weight: 800;
-    letter-spacing: 1.2px;
+    letter-spacing: 1px;
     box-shadow: 0 2px 6px rgba(19,66,38,0.2);
     text-transform: uppercase;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
 
   .price-list-box {
     border: 1.5px solid #134226;
     border-radius: 10px;
-    padding: 8px 20px;
+    padding: 8px 16px;
     background: rgba(19,66,38,0.05);
     text-align: right;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
 
   .pl-small {
