@@ -61,13 +61,8 @@ const getStyles = () => `
   .brand-logo-img {
     height: 85px; /* Increased logo size */
     width: 260px; 
-    background-color: #134226;
-    -webkit-mask-size: contain;
-    -webkit-mask-repeat: no-repeat;
-    -webkit-mask-position: center left;
-    mask-size: contain;
-    mask-repeat: no-repeat;
-    mask-position: center left;
+    object-fit: contain;
+    object-position: left center;
   }
 
   .organic-pill {
@@ -525,7 +520,7 @@ const getStyles = () => `
      ========================================================================== */
   .footer-guide-container {
     page-break-inside: avoid;
-    margin: 40px 16px 20px 16px;
+    margin: 16px 16px 16px 16px;
     font-family: 'Inter', sans-serif;
   }
 
@@ -533,12 +528,12 @@ const getStyles = () => `
     background: linear-gradient(90deg, #134226 0%, #1e5c38 100%);
     color: white;
     text-align: center;
-    padding: 12px 16px;
-    font-size: 15px;
+    padding: 10px 16px;
+    font-size: 14px;
     font-weight: 900;
-    letter-spacing: 1.5px;
+    letter-spacing: 1px;
     border-radius: 8px;
-    margin-bottom: 24px;
+    margin-bottom: 16px;
     box-shadow: 0 4px 12px rgba(19,66,38,0.15);
   }
 
@@ -552,14 +547,14 @@ const getStyles = () => `
     display: flex;
     justify-content: space-between;
     gap: 12px;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
   }
 
   .guide-box {
     flex: 1;
     border: 1.5px solid #134226;
-    border-radius: 12px;
-    padding: 8px;
+    border-radius: 10px;
+    padding: 6px;
     text-align: center;
     margin: 0;
   }
@@ -574,33 +569,33 @@ const getStyles = () => `
   }
 
   .guide-icon svg {
-    width: 38px;
-    height: 38px;
+    width: 32px;
+    height: 32px;
     margin-bottom: -2px;
   }
 
   .guide-icon span {
-    font-size: 9px;
+    font-size: 8.5px;
     font-weight: 800;
     margin-top: 2px;
   }
 
   .guide-box-title {
-    font-size: 10px;
+    font-size: 9.5px;
     font-weight: 800;
     color: #333;
     line-height: 1.2;
   }
 
   .guide-box-sub {
-    font-size: 10px;
+    font-size: 9.5px;
     font-weight: 800;
     color: #333;
     line-height: 1.2;
   }
 
   .guide-box-detail {
-    font-size: 8.5px;
+    font-size: 8px;
     font-weight: 800;
     color: #134226;
     margin-top: 4px;
@@ -609,14 +604,14 @@ const getStyles = () => `
 
   .guide-bullets {
     padding-left: 10px;
-    font-size: 13px;
+    font-size: 12px;
     color: #333;
-    line-height: 1.6;
-    margin-bottom: 24px;
+    line-height: 1.5;
+    margin-bottom: 16px;
   }
 
   .guide-bullets li {
-    margin-bottom: 8px;
+    margin-bottom: 6px;
   }
 
   .flour-tags-grid {
