@@ -20,23 +20,24 @@
             <header class="header">
                 <div class="logo-icon">📄</div>
                 <h1>Pricelist Generator</h1>
-                <p>Upload your CSV to instantly generate a beautiful PDF.</p>
+                <p>Generate a beautiful PDF from your Google Sheet data.</p>
             </header>
 
-            <form id="generatorForm" class="generator-form">
+            <form id="generatorForm">
                 <div class="form-group">
-                    <label for="csvFile">Upload Data (CSV)</label>
-                    <div class="file-drop-area" id="dropArea">
-                        <span class="file-icon">📁</span>
-                        <span class="file-msg">Choose a CSV file or drag it here</span>
-                        <input type="file" id="csvFile" name="csvFile" accept=".csv" required>
-                    </div>
-                    <p class="format-note"><strong>Format:</strong> Category, Product, Package Type, Weight, Price</p>
+                    <label for="monthYear">Select Month & Year</label>
+                    <select id="monthYear" name="monthYear">
+                        <option value="JULY 2026">JULY 2026</option>
+                        <option value="AUGUST 2026">AUGUST 2026</option>
+                        <option value="SEPTEMBER 2026">SEPTEMBER 2026</option>
+                        <option value="OCTOBER 2026">OCTOBER 2026</option>
+                        <option value="NOVEMBER 2026">NOVEMBER 2026</option>
+                        <option value="DECEMBER 2026">DECEMBER 2026</option>
+                    </select>
                 </div>
 
-                <div class="form-group">
-                    <label for="monthYear">Month & Year (Optional)</label>
-                    <input type="text" id="monthYear" name="monthYear" placeholder="e.g. AUGUST 2026" class="text-input">
+                <div class="note-box" style="margin-bottom: 20px; font-size: 14px; text-align: center; color: var(--text-muted);">
+                    Data will be pulled automatically from your Google Sheet (<code>Driect-pdf</code> tab).
                 </div>
 
                 <button type="submit" class="submit-btn" id="submitBtn">

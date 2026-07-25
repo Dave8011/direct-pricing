@@ -25,32 +25,63 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    // Parse the incoming form data
-    const form = formidable({ multiples: false });
-    const [fields, files] = await new Promise((resolve, reject) => {
-      form.parse(req, (err, fields, files) => {
-        if (err) reject(err);
-        resolve([fields, files]);
-      });
-    });
-
-    const csvFile = files.csvFile;
-    if (!csvFile) {
-      return res.status(400).json({ error: 'No CSV file uploaded' });
+    let body = {};
+    if (req.headers['content-type'] === 'application/json') {
+      try {
+        const chunks = [];
+        for await (const chunk of req) {
+          chunks.push(chunk);
+        }
+        body = JSON.parse(Buffer.concat(chunks).toString());
+      } catch (e) {
+        // Fallback or ignore
+      }
+    } else {
+      // It might be parsed automatically by some middleware, but we have bodyParser: false
+      // To support simple JSON, let's keep it robust. If formData is used:
+      try {
+        const form = formidable({ multiples: false });
+        const [fields, files] = await new Promise((resolve, reject) => {
+          form.parse(req, (err, fields, files) => {
+            if (err) reject(err);
+            resolve([fields, files]);
+          });
+        });
+        body = fields;
+      } catch (e) {
+        // Fallback
+      }
     }
 
-    // `formidable` in Vercel v3+ sometimes puts files in an array
-    const file = Array.isArray(csvFile) ? csvFile[0] : csvFile;
-    const csvPath = file.filepath;
-
-    let monthYear = fields.monthYear;
+    let monthYear = body.monthYear;
     if (Array.isArray(monthYear)) monthYear = monthYear[0];
     if (!monthYear || monthYear.trim() === '') monthYear = 'JULY 2026'; // Default
 
-    // 1. Parse CSV
-    const categories = parseCSV(csvPath);
+    // 1. Fetch CSV from Google Sheets
+    const SHEET_ID = '1nmTKuazMi-DvA8r4UhZYPGCqMWMsCE4zS3EW0CnQfn8';
+    const SHEET_NAME = 'Driect-pdf';
+    const csvUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${SHEET_NAME}`;
+    
+    const sheetResponse = await fetch(csvUrl);
+    if (!sheetResponse.ok) {
+      throw new Error(`Failed to fetch Google Sheet: ${sheetResponse.statusText}`);
+    }
+    const csvText = await sheetResponse.text();
+
+    // 2. Parse CSV text directly (modify parser to handle string instead of file)
+    // Wait, parseCSV expects a filePath. We need to create a temporary file or modify parser.
+    const os = require('os');
+    const fs = require('fs');
+    const path = require('path');
+    const tempCsvPath = path.join(os.tmpdir(), `temp_${Date.now()}.csv`);
+    fs.writeFileSync(tempCsvPath, csvText);
+
+    const categories = parseCSV(tempCsvPath);
+    // Clean up
+    if (fs.existsSync(tempCsvPath)) fs.unlinkSync(tempCsvPath);
+
     if (Object.keys(categories).length === 0) {
-      return res.status(400).json({ error: 'CSV is empty or invalid' });
+      return res.status(400).json({ error: 'Google Sheet CSV is empty or invalid' });
     }
 
     // 2. Render HTML

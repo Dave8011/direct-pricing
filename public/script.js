@@ -1,53 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('generatorForm');
-    const fileInput = document.getElementById('csvFile');
-    const dropArea = document.getElementById('dropArea');
-    const fileMsg = document.querySelector('.file-msg');
     const submitBtn = document.getElementById('submitBtn');
     const btnText = document.querySelector('.btn-text');
     const spinner = document.getElementById('spinner');
     const statusMessage = document.getElementById('statusMessage');
-
-    // Drag and drop functionality
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-        dropArea.addEventListener(eventName, preventDefaults, false);
-    });
-
-    function preventDefaults(e) {
-        e.preventDefault();
-        e.stopPropagation();
-    }
-
-    ['dragenter', 'dragover'].forEach(eventName => {
-        dropArea.addEventListener(eventName, () => {
-            dropArea.classList.add('is-active');
-        }, false);
-    });
-
-    ['dragleave', 'drop'].forEach(eventName => {
-        dropArea.addEventListener(eventName, () => {
-            dropArea.classList.remove('is-active');
-        }, false);
-    });
-
-    dropArea.addEventListener('drop', (e) => {
-        let dt = e.dataTransfer;
-        let files = dt.files;
-        fileInput.files = files;
-        updateFileMsg();
-    }, false);
-
-    fileInput.addEventListener('change', updateFileMsg);
-
-    function updateFileMsg() {
-        if (fileInput.files.length > 0) {
-            fileMsg.textContent = fileInput.files[0].name;
-            fileMsg.style.color = 'var(--text-main)';
-        } else {
-            fileMsg.textContent = 'Choose a CSV file or drag it here';
-            fileMsg.style.color = 'var(--text-muted)';
-        }
-    }
 
     function showStatus(msg, type) {
         statusMessage.textContent = msg;
@@ -59,14 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         
-        if (!fileInput.files || fileInput.files.length === 0) {
-            showStatus('Please select a CSV file.', 'error');
-            return;
-        }
-
-        const formData = new FormData();
-        formData.append('csvFile', fileInput.files[0]);
-        formData.append('monthYear', document.getElementById('monthYear').value);
+        const monthYear = document.getElementById('monthYear').value;
 
         // Update UI to loading state
         submitBtn.disabled = true;
@@ -77,7 +26,10 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const response = await fetch('/api/generate', {
                 method: 'POST',
-                body: formData
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ monthYear: monthYear })
             });
 
             if (!response.ok) {
