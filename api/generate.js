@@ -90,7 +90,7 @@ module.exports = async function handler(req, res) {
 
     // 5. Send PDF as response
     res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', 'attachment; filename="Generated_Pricelist.pdf"');
+    res.setHeader('Content-Disposition', 'attachment; filename="Pure_Tree_Price_List.pdf"');
     res.setHeader('Content-Length', pdfBuffer.length);
     return res.end(pdfBuffer);
 

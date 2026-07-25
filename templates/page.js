@@ -9,22 +9,26 @@ const renderFullHTML = (categories, monthYear) => {
   const productsHTML = generateProductPages(categories, monthYear);
   const footerGuideHTML = generateFooterGuide();
   
-  // Inject the footer guide INSIDE the .page div so it doesn't get pushed to a new page
-  const finalProductsHTML = productsHTML.replace(/<\/div>\s*$/, footerGuideHTML + '\n</div>\n');
+  const backCoverHTML = `
+    <div class="page" style="display: flex; flex-direction: column; justify-content: center; padding: 40px 0;">
+      ${footerGuideHTML}
+    </div>
+  `;
 
   return `
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Pure Tree Organic Price List - ${monthYear}</title>
+  <title>Pure Tree Price List - ${monthYear}</title>
   <style>
     ${stylesHTML}
   </style>
 </head>
 <body>
   ${coverHTML}
-  ${finalProductsHTML}
+  ${productsHTML}
+  ${backCoverHTML}
 </body>
 </html>
   `;
