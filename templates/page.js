@@ -8,12 +8,7 @@ const renderFullHTML = (categories, monthYear) => {
   const coverHTML = generateCoverPage(monthYear);
   const productsHTML = generateProductPages(categories, monthYear);
   const footerGuideHTML = generateFooterGuide();
-  
-  const backCoverHTML = `
-    <div class="page" style="display: flex; flex-direction: column; justify-content: center; padding: 40px 0;">
-      ${footerGuideHTML}
-    </div>
-  `;
+  const finalProductsHTML = productsHTML.replace(/<\/div>\s*$/, footerGuideHTML + '\n</div>\n');
 
   return `
 <!DOCTYPE html>
@@ -27,8 +22,7 @@ const renderFullHTML = (categories, monthYear) => {
 </head>
 <body>
   ${coverHTML}
-  ${productsHTML}
-  ${backCoverHTML}
+  ${finalProductsHTML}
 </body>
 </html>
   `;
