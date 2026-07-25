@@ -59,15 +59,10 @@ const getStyles = () => `
   }
 
   .brand-logo-img {
-    height: 80px; /* Slightly reduced to save space */
+    height: 80px;
     width: 240px; 
-    background-color: #134226;
-    -webkit-mask-size: contain;
-    -webkit-mask-repeat: no-repeat;
-    -webkit-mask-position: center left;
-    mask-size: contain;
-    mask-repeat: no-repeat;
-    mask-position: center left;
+    object-fit: contain;
+    object-position: left center;
   }
 
   .organic-pill {

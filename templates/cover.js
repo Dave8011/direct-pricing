@@ -20,7 +20,7 @@ const generateCoverPage = (monthYear) => {
     <div class="cover-header">
       <div class="cover-top-bar">
         <div class="brand-logo-container">
-          <div class="brand-logo-img" style="-webkit-mask-image: url('${pureTreeLogo}'); mask-image: url('${pureTreeLogo}');"></div>
+          <img src="${pureTreeLogo}" alt="Pure Tree Logo" class="brand-logo-img" />
           <span class="organic-pill">100% CERTIFIED ORGANIC</span>
         </div>
         <div class="price-list-box">
