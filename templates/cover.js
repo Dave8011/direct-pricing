@@ -18,11 +18,11 @@ const generateCoverPage = (monthYear) => {
   <!-- Cover Page (Page 1) -->
   <div class="page cover-page">
     <div class="cover-header">
-      <div class="cover-top-bar">
+      <div class="cover-top-bar" style="position: relative;">
         <div class="brand-logo-container">
           <img class="brand-logo-img" src="${pureTreeLogo}" alt="Pure Tree" />
-          <span class="organic-pill">100% CERTIFIED ORGANIC</span>
         </div>
+        <span class="organic-pill" style="position: absolute; left: 50%; transform: translateX(-50%);">100% CERTIFIED ORGANIC</span>
         <div style="display: flex; flex-direction: column; align-items: flex-end;">
           <div class="price-list-box">
             <div class="pl-small">PRICE LIST</div>
