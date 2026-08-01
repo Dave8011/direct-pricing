@@ -20,7 +20,7 @@ const generateCoverPage = (monthYear) => {
     <div class="cover-header">
       <div class="cover-top-bar">
         <div class="brand-logo-container">
-          <img class="brand-logo-img" src="${pureTreeLogo}" alt="Pure Tree" />
+          <div class="brand-logo-img" style="-webkit-mask-image: url('${pureTreeLogo}'); mask-image: url('${pureTreeLogo}');"></div>
           <span class="organic-pill">100% CERTIFIED ORGANIC</span>
         </div>
         <div style="display: flex; flex-direction: column; align-items: flex-end;">
@@ -169,9 +169,9 @@ const generateCoverPage = (monthYear) => {
           <div style="font-size: 13.5px; font-weight: 800; color: #134226; margin: 1px 0;">
             📞 +91 900 405 8669
           </div>
-          <div style="display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 1px;">
-            <img src="${socialLogo}" alt="Social Media" style="height: 12px; width: auto; object-fit: contain;" />
-            <span style="font-size: 9.5px; color: #333; font-weight: 600;">
+          <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 4px;">
+            <img src="${socialLogo}" alt="Social Media" style="height: 22px; width: auto; object-fit: contain;" />
+            <span style="font-size: 9.5px; color: #333; font-weight: 600; text-align: left; line-height: 1.3;">
               care@puretreefoods.com • @puretreefoods<br>
               <strong style="color: #134226;">www.puretreefoods.com</strong>
             </span>
