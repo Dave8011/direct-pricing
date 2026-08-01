@@ -59,15 +59,10 @@ const getStyles = () => `
   }
 
   .brand-logo-img {
-    height: 80px;
-    width: 240px; 
-    background-color: #134226;
-    -webkit-mask-size: contain;
-    -webkit-mask-repeat: no-repeat;
-    -webkit-mask-position: center left;
-    mask-size: contain;
-    mask-repeat: no-repeat;
-    mask-position: center left;
+    height: 120px;
+    width: auto; 
+    max-width: 320px;
+    object-fit: contain;
   }
 
   .organic-pill {
@@ -112,7 +107,7 @@ const getStyles = () => `
   }
 
   .cover-subtitle {
-    font-size: 11.5px; /* Increased font size */
+    font-size: 13.5px; /* Increased font size */
     color: #2c3e35;
     font-weight: 700;
     margin: 4px 0 0 0;
@@ -144,11 +139,11 @@ const getStyles = () => `
     font-weight: 800;
     color: #134226;
     margin-bottom: 2px;
-    font-size: 14.5px; /* Increased font size */
+    font-size: 16px; /* Increased font size */
   }
 
   .stat-sub {
-    font-size: 11.5px; /* Increased font size */
+    font-size: 13px; /* Increased font size */
     color: #555;
     font-weight: 500;
   }
@@ -164,7 +159,7 @@ const getStyles = () => `
   }
 
   .section-h3 {
-    font-size: 14px;
+    font-size: 15.5px;
     color: #134226;
     font-weight: 800;
     margin: 0 0 10px 0;
@@ -184,7 +179,7 @@ const getStyles = () => `
   .comparison-table th, .comparison-table td {
     padding: 8px;
     text-align: left;
-    font-size: 10.5px;
+    font-size: 11.5px;
     line-height: 1.35;
   }
 

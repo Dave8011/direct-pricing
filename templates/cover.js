@@ -20,7 +20,7 @@ const generateCoverPage = (monthYear) => {
     <div class="cover-header">
       <div class="cover-top-bar">
         <div class="brand-logo-container">
-          <div class="brand-logo-img" style="-webkit-mask-image: url('${pureTreeLogo}'); mask-image: url('${pureTreeLogo}');"></div>
+          <img class="brand-logo-img" src="${pureTreeLogo}" alt="Pure Tree" />
           <span class="organic-pill">100% CERTIFIED ORGANIC</span>
         </div>
         <div class="price-list-box">
@@ -53,7 +53,7 @@ const generateCoverPage = (monthYear) => {
     <div class="wheat-bg-section">
       <div style="flex: 1.1;">
         <h3 class="section-h3">🌾 WHAT DOES FRESHLY MILLED MEAN?</h3>
-        <ul style="margin: 0; padding-left: 16px; font-size: 10.5px; line-height: 1.6; color: #2c3e35;">
+        <ul style="margin: 0; padding-left: 16px; font-size: 11.5px; line-height: 1.6; color: #2c3e35;">
           <li style="margin-bottom: 4px;">Freshly milled <strong>only after</strong> your order is confirmed.</li>
           <li style="margin-bottom: 4px;">Made from <strong>100% Certified Organic</strong> grains & millets.</li>
           <li style="margin-bottom: 4px;">Minimum heat, humidity & light exposure preserves nutrients.</li>
@@ -115,9 +115,9 @@ const generateCoverPage = (monthYear) => {
 
     <div class="bottom-section">
       <!-- Left Column -->
-      <div style="flex: 1; display: flex; flex-direction: column; gap: 6px; font-size: 9.5px; line-height: 1.4;">
+      <div style="flex: 1; display: flex; flex-direction: column; gap: 6px; font-size: 10.5px; line-height: 1.4;">
         <div>
-          <strong style="color: #134226; font-size: 10.5px;">Why Organic Certification Matters?</strong>
+          <strong style="color: #134226; font-size: 11.5px;">Why Organic Certification Matters?</strong>
           <ul style="margin: 3px 0 0 0; padding-left: 15px; color: #444;">
             <li>Certified Organic ensures the product is really organic.</li>
             <li>Certified Organic ensures the product should not get any contamination till it reaches your hands.</li>
@@ -159,13 +159,13 @@ const generateCoverPage = (monthYear) => {
 
         <!-- Contact Box -->
         <div style="text-align: center; padding-top: 4px; border-top: 1px solid #e0e0e0; margin-top: 2px;">
-          <div style="font-size: 11px; font-weight: 800; color: #134226; letter-spacing: 0.5px;">CALL OR WHATSAPP TO ORDER</div>
-          <div style="font-size: 13.5px; font-weight: 800; color: #134226; margin: 1px 0;">
+          <div style="font-size: 12.5px; font-weight: 800; color: #134226; letter-spacing: 0.5px;">CALL OR WHATSAPP TO ORDER</div>
+          <div style="font-size: 15px; font-weight: 800; color: #134226; margin: 1px 0;">
             📞 +91 900 405 8669
           </div>
           <div style="display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 1px;">
             <img src="${socialLogo}" alt="Social Media" style="height: 12px; width: auto; object-fit: contain;" />
-            <span style="font-size: 9.5px; color: #333; font-weight: 600;">
+            <span style="font-size: 10.5px; color: #333; font-weight: 600;">
               care@puretreefoods.com • @puretreefoods<br>
               <strong style="color: #134226;">www.puretreefoods.com</strong>
             </span>
