@@ -100,7 +100,7 @@ const generateCoverPage = (monthYear) => {
           <thead>
             <tr>
               <th style="width: 45%;">Packaged Market Atta</th>
-              <th>Freshly Milled Pure Tree</th>
+              <th>Freshly Milled Atta Pure Tree</th>
             </tr>
           </thead>
           <tbody>
