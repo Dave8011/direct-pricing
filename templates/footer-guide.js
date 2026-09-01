@@ -106,7 +106,7 @@ const generateFooterGuide = () => {
 
 const generateBottomBar = () => {
   return `
-    <div class="guide-bottom-bar" style="margin: 0 16px 16px 16px; border-radius: 8px;">
+    <div class="guide-bottom-bar" style="margin: 0 16px 8px 16px; border-radius: 8px;">
       <div class="guide-social">
         <div class="social-icons">
           <!-- Instagram -->

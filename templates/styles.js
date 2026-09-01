@@ -650,7 +650,7 @@ const getStyles = () => `
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 16px 24px;
+    padding: 12px 24px;
   }
 
   .guide-social {
