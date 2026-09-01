@@ -690,6 +690,105 @@ const getStyles = () => `
     width: 24px;
     height: 24px;
   }
+  /* ==========================================================================
+     HAMPERS AND GIFTING LAYOUT
+     ========================================================================== */
+  .hamper-banner-placeholder {
+    width: 100%;
+    height: 120px;
+    background: #eef5f0;
+    border: 2px dashed #c8ded0;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    color: #668270;
+    font-weight: 700;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .hamper-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    padding: 0 4px 16px 4px;
+  }
+
+  .hamper-card {
+    background: linear-gradient(135deg, #ffffff 0%, #fafcfa 100%);
+    border: 1px solid #d5e6db;
+    border-radius: 12px;
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 6px 16px rgba(19,66,38,0.04), 0 2px 4px rgba(19,66,38,0.02);
+    page-break-inside: avoid;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .hamper-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, #d4af37 0%, #f3e5ab 50%, #d4af37 100%); /* Gold premium gradient */
+  }
+
+  .hamper-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 16.5px;
+    font-weight: 700;
+    color: #0f361f;
+    margin-bottom: 8px;
+    line-height: 1.25;
+    display: flex;
+    align-items: center;
+    letter-spacing: 0.3px;
+  }
+
+  .hamper-contents {
+    font-size: 11.5px;
+    color: #55665b;
+    font-weight: 500;
+    line-height: 1.55;
+    flex-grow: 1;
+    margin-bottom: 14px;
+    padding-bottom: 14px;
+    border-bottom: 1px dashed #dce8e0;
+  }
+
+  .hamper-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  .hamper-pack {
+    font-size: 10px;
+    font-weight: 800;
+    color: #7b9484;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: #f0f7f2;
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid #e1eee4;
+  }
+
+  .hamper-price {
+    font-size: 20px;
+    font-weight: 900;
+    color: #134226;
+    line-height: 1;
+    text-shadow: 0 1px 1px rgba(0,0,0,0.05);
+  }
 `;
 
 module.exports = {

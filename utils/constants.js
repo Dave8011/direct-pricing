@@ -6,7 +6,8 @@ const CATEGORY_ORDER = [
   'ORGANIC SPICE & MASALA',
   'ORGANIC SEEDS',
   'ORGANIC DRY FRUITS',
-  'ORGANIC OTHER'
+  'ORGANIC OTHER',
+  'GROCERY - HAMPERS AND GIFTING'
 ];
 
 const CATEGORY_DISPLAY_NAMES = {
@@ -17,18 +18,20 @@ const CATEGORY_DISPLAY_NAMES = {
   'ORGANIC SPICE & MASALA': 'Organic Spices & Masalas',
   'ORGANIC SEEDS': 'Organic Healthy Seeds',
   'ORGANIC DRY FRUITS': 'Organic Dry Fruits & Nuts',
-  'ORGANIC OTHER': 'Organic Sweeteners & Essentials'
+  'ORGANIC OTHER': 'Organic Sweeteners & Essentials',
+  'GROCERY - HAMPERS AND GIFTING': 'Hampers & Gifting'
 };
 
 const CATEGORY_SUBTEXTS = {
   'FLOURS-FRESHLY MILLED': 'Milled fresh upon order confirmation — zero preservatives or storage.',
-  'ORGANIC GRAINS': '100% Certified organic whole grains, unpolished and nutrient-rich.',
+  'ORGANIC GRAINS': 'Certified organic whole grains, unpolished and nutrient-rich.',
   'ORGANIC DALS & LENTILS': 'Unpolished dals direct from certified organic farms.',
   'ORGANIC MILLETS': 'Gluten-free traditional super-grains rich in fiber.',
   'ORGANIC SPICE & MASALA': 'Aromatic, pure spices with natural essential oils intact.',
   'ORGANIC SEEDS': 'Raw, unroasted natural seeds packed with nutrition.',
   'ORGANIC DRY FRUITS': 'Handpicked premium organic nuts and raisins.',
-  'ORGANIC OTHER': 'Natural jaggery, unrefined sugar, rava & healthy staples.'
+  'ORGANIC OTHER': 'Natural jaggery, unrefined sugar, rava & healthy staples.',
+  'GROCERY - HAMPERS AND GIFTING': 'Thoughtfully curated healthy hampers for your loved ones.'
 };
 
 const PACKAGE_BADGES = {

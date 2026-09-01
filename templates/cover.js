@@ -22,7 +22,7 @@ const generateCoverPage = (monthYear) => {
         <div class="brand-logo-container">
           <img class="brand-logo-img" src="${pureTreeLogo}" alt="Pure Tree" />
         </div>
-        <span class="organic-pill" style="position: absolute; left: 50%; transform: translateX(-50%);">100% CERTIFIED ORGANIC</span>
+        <span class="organic-pill" style="position: absolute; left: 50%; transform: translateX(-50%);">CERTIFIED ORGANIC</span>
         <div style="display: flex; flex-direction: column; align-items: flex-end;">
           <div class="price-list-box">
             <div class="pl-small">PRICE LIST</div>
@@ -71,7 +71,7 @@ const generateCoverPage = (monthYear) => {
         <h3 class="section-h3">🌾 WHAT DOES FRESHLY MILLED MEAN?</h3>
         <ul style="margin: 0; padding-left: 16px; font-size: 10.5px; line-height: 1.6; color: #2c3e35;">
           <li style="margin-bottom: 4px;">Freshly milled <strong>only after</strong> your order is confirmed.</li>
-          <li style="margin-bottom: 4px;">Made from <strong>100% Certified Organic</strong> grains & millets.</li>
+          <li style="margin-bottom: 4px;">Made from <strong>Certified Organic</strong> grains & millets.</li>
           <li style="margin-bottom: 4px;">Minimum heat, humidity & light exposure preserves nutrients.</li>
           <li style="margin-bottom: 4px;"><strong>Zero additives, zero preservatives</strong> added.</li>
           <li style="margin-bottom: 4px;">Crafted for freshness, delivered with care.</li>
@@ -106,7 +106,7 @@ const generateCoverPage = (monthYear) => {
           <tbody>
             <tr>
               <td>Sourced origin not disclosed</td>
-              <td>100% Certified Organic grains direct from farms</td>
+              <td>Certified Organic grains direct from farms</td>
             </tr>
             <tr>
               <td>Broken or mixed quality grains possible</td>
@@ -154,7 +154,7 @@ const generateCoverPage = (monthYear) => {
         </div>
 
         <div style="color: #444;">
-          <strong style="color: #134226;">Trusted & Traceable —</strong> Pure Tree products are grown in certified organic farms, maintaining the highest standards that are 100% Certified with <strong>India Organic/Jaivik Bharat (ORG/SC/ 2305/000932) & Food Chain NPOP/NAB/0045.</strong>
+          <strong style="color: #134226;">Trusted & Traceable —</strong> Pure Tree products are grown in certified organic farms, maintaining the highest standards that are Certified with <strong>India Organic/Jaivik Bharat (ORG/SC/ 2305/000932) & Food Chain NPOP/NAB/0045.</strong>
         </div>
 
         <!-- Certifications -->

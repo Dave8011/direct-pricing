@@ -42,7 +42,7 @@ function parseCSV(filePath) {
 
   for (const row of rows) {
     if (row.length < 5) continue;
-    let [cat, prod, packType, weight, price] = row;
+    let [cat, prod, packType, weight, price, itemName] = row;
 
     // Standardize category and product if provided, or retain current
     if (cat && cat.trim() !== '') currentCategory = cat.trim();
@@ -60,7 +60,8 @@ function parseCSV(filePath) {
     categories[currentCategory][currentProduct].push({
       type: packType ? packType.trim() : '',
       weight: weight ? weight.trim() : '',
-      price: price ? price.trim() : ''
+      price: price ? price.trim() : '',
+      itemName: itemName ? itemName.trim() : ''
     });
   }
 

@@ -1,14 +1,15 @@
 const { getStyles } = require('./styles');
 const { generateCoverPage } = require('./cover');
 const { generateProductPages } = require('./products');
-const { generateFooterGuide } = require('./footer-guide');
+const { generateFooterGuide, generateBottomBar } = require('./footer-guide');
 
 const renderFullHTML = (categories, monthYear) => {
   const stylesHTML = getStyles();
   const coverHTML = generateCoverPage(monthYear);
-  const productsHTML = generateProductPages(categories, monthYear);
   const footerGuideHTML = generateFooterGuide();
-  const finalProductsHTML = productsHTML.replace(/<\/div>\s*$/, footerGuideHTML + '\n</div>\n');
+  const bottomBarHTML = generateBottomBar();
+  const productsHTML = generateProductPages(categories, monthYear, footerGuideHTML, bottomBarHTML);
+  const finalProductsHTML = productsHTML;
 
   return `
 <!DOCTYPE html>

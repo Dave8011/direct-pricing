@@ -1,14 +1,16 @@
 const { CATEGORY_DISPLAY_NAMES, CATEGORY_SUBTEXTS, PACKAGE_BADGES } = require('../utils/constants');
-const { formatWeight, formatPrice } = require('../utils/helpers');
+const { formatWeight, formatPrice, getLogoDataUrl } = require('../utils/helpers');
 
 /**
  * Renders product listing tables with fixed 3-column pack grid slots for pixel-perfect alignment
  */
-const generateProductPages = (categories, monthYear) => {
+const generateProductPages = (categories, monthYear, footerGuideHTML = '', bottomBarHTML = '') => {
   const monthYearCapitalized = monthYear
     .split(' ')
     .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
     .join(' ');
+
+  const hampersBannerBase64 = getLogoDataUrl('hampers-banner.jpg');
 
   let html = `
   <!-- Product Listing Page -->
@@ -28,89 +30,150 @@ const generateProductPages = (categories, monthYear) => {
   `;
 
   const categoryKeys = Object.keys(categories);
+  let footerInjected = false;
 
   categoryKeys.forEach((catKey) => {
     const displayName = CATEGORY_DISPLAY_NAMES[catKey] || catKey;
-    const subtext = CATEGORY_SUBTEXTS[catKey] || '100% Certified Organic • Premium Quality';
+    const subtext = CATEGORY_SUBTEXTS[catKey] || 'Certified Organic • Premium Quality';
     const products = categories[catKey];
     const productNames = Object.keys(products);
 
     if (productNames.length === 0) return;
 
-    html += `
-      <div class="category-section">
-        <div class="cat-header">
-          <div class="cat-title">${displayName}</div>
-          <div class="cat-sub">${subtext}</div>
-        </div>
+    // Inject footer guide before Hampers
+    if (catKey === 'GROCERY - HAMPERS AND GIFTING' && !footerInjected) {
+      html += footerGuideHTML;
+      footerInjected = true;
+    }
 
-        <table class="product-table">
-          <thead>
-            <tr>
-              <th class="col-prod-name">PRODUCT NAME</th>
-              <th class="col-pack-grid">
-                AVAILABLE PACKS, PACKAGING & PRICES
-                <div style="font-size: 7.5px; font-weight: 700; color: #2c593d; margin-top: 3px; letter-spacing: 0.5px;">
-                  BP = BROWN POUCH <span style="margin:0 4px; color:#95bda3;">|</span> GB = GLASS BOTTLE <span style="margin:0 4px; color:#95bda3;">|</span> PJ = PLASTIC JAR <span style="margin:0 4px; color:#95bda3;">|</span> KG = KG BAG (BULK)
-                </div>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-    `;
+    if (catKey === 'GROCERY - HAMPERS AND GIFTING') {
+      html += `
+        <div class="category-section" style="background: transparent; border: none; box-shadow: none;">
+          <div class="cat-header" style="margin-bottom: 16px; border-radius: 8px;">
+            <div class="cat-title">${displayName}</div>
+            <div class="cat-sub">${subtext}</div>
+          </div>
+          
+          <div style="margin-bottom: 16px; border-radius: 8px; overflow: hidden; height: 160px;">
+            <img src="${hampersBannerBase64}" style="width: 100%; height: 100%; object-fit: cover; display: block;" />
+          </div>
+          
+          <div class="hamper-grid">
+      `;
 
-    productNames.forEach((prodName, idx) => {
-      const packs = products[prodName];
-      const isAltRow = idx % 2 === 1; // Alternating zebra row
-      
-      let mainName = prodName;
-      let subName = '';
-      if (prodName.includes('(') && prodName.includes(')')) {
-        const match = prodName.match(/(.*)\s*(\(.*?\))/);
-        if (match) {
-          mainName = match[1].trim();
-          subName = match[2].trim();
-        }
-      }
+      productNames.forEach((prodName) => {
+        const packs = products[prodName];
+        if (packs.length === 0) return;
+        const pack = packs[0]; // Hampers typically have 1 pack
+
+        const mainName = pack.itemName || prodName;
+        const subName = pack.itemName ? prodName : '';
+        const rawWeight = (parseFloat(pack.weight) * 1000).toFixed(0);
+        const formattedP = formatPrice(pack.price);
+
+        html += `
+            <div class="hamper-card">
+              <div class="hamper-title">
+                <svg style="width: 14px; height: 14px; margin-right: 6px; fill: #d4af37;" viewBox="0 0 24 24"><path d="M22,12l-4.6,1.4l1.4,4.6l-4.6-1.4L12,22l-1.4-4.6L6,18.8l1.4-4.6L2.8,12l4.6-1.4L6,6l4.6,1.4L12,2.8l1.4,4.6L18,6l-1.4,4.6L22,12z"/></svg>
+                ${mainName}
+              </div>
+              <div class="hamper-contents">${subName}</div>
+              <div class="hamper-footer">
+                <div class="hamper-pack">Total Grams ${rawWeight} • ${pack.type}</div>
+                <div class="hamper-price">${formattedP}</div>
+              </div>
+            </div>
+        `;
+      });
 
       html += `
-        <tr class="product-row ${isAltRow ? 'alt-row' : ''}">
-          <td class="cell-product-name col-prod-name">
-            <div class="prod-main-name">${mainName}</div>
-            ${subName ? `<div class="prod-sub-name">${subName}</div>` : ''}
-          </td>
-          <td class="cell-pack-grid col-pack-grid">
-            <div class="packs-grid-container">
-              ${packs.map((pack, pIdx) => {
-                const formattedW = formatWeight(pack.weight);
-                const formattedP = formatPrice(pack.price);
-                const isBestValue = packs.length > 1 && pIdx === packs.length - 1;
-                
-                const typeKey = Object.keys(PACKAGE_BADGES).find(
-                  k => k.toLowerCase() === pack.type.trim().toLowerCase()
-                );
-                const shortCode = typeKey ? PACKAGE_BADGES[typeKey].code : pack.type;
-                
-                return `
-                  <div class="pack-card ${isBestValue ? 'best-value' : ''}">
-                    ${isBestValue ? '<div class="best-value-ribbon"><svg style="width:7px;height:7px;margin-right:3px;fill:currentColor;" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>BEST VALUE</div>' : ''}
-                    <div class="pack-weight-type">${formattedW} (${shortCode})</div>
-                    <div class="pack-price-large">${formattedP}</div>
-                  </div>
-                `;
-              }).join('')}
-            </div>
-          </td>
-        </tr>
+          </div>
+        </div>
       `;
-    });
+    } else {
+      // Standard Table Rendering
+      html += `
+        <div class="category-section">
+          <div class="cat-header">
+            <div class="cat-title">${displayName}</div>
+            <div class="cat-sub">${subtext}</div>
+          </div>
 
-    html += `
-          </tbody>
-        </table>
-      </div>
-    `;
+          <table class="product-table">
+            <thead>
+              <tr>
+                <th class="col-prod-name">PRODUCT NAME</th>
+                <th class="col-pack-grid">
+                  AVAILABLE PACKS, PACKAGING & PRICES
+                  <div style="font-size: 7.5px; font-weight: 700; color: #2c593d; margin-top: 3px; letter-spacing: 0.5px;">
+                    BP = BROWN POUCH <span style="margin:0 4px; color:#95bda3;">|</span> GB = GLASS BOTTLE <span style="margin:0 4px; color:#95bda3;">|</span> PJ = PLASTIC JAR <span style="margin:0 4px; color:#95bda3;">|</span> KG = KG BAG (BULK)
+                  </div>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+      `;
+
+      productNames.forEach((prodName, idx) => {
+        const packs = products[prodName];
+        const isAltRow = idx % 2 === 1; // Alternating zebra row
+        
+        let mainName = prodName;
+        let subName = '';
+        
+        if (prodName.includes('(') && prodName.includes(')')) {
+          const match = prodName.match(/(.*)\s*(\(.*?\))/);
+          if (match) {
+            mainName = match[1].trim();
+            subName = match[2].trim();
+          }
+        }
+
+        html += `
+          <tr class="product-row ${isAltRow ? 'alt-row' : ''}">
+            <td class="cell-product-name col-prod-name">
+              <div class="prod-main-name">${mainName}</div>
+              ${subName ? `<div class="prod-sub-name">${subName}</div>` : ''}
+            </td>
+            <td class="cell-pack-grid col-pack-grid">
+              <div class="packs-grid-container">
+                ${packs.map((pack, pIdx) => {
+                  const formattedW = formatWeight(pack.weight);
+                  const formattedP = formatPrice(pack.price);
+                  const isBestValue = packs.length > 1 && pIdx === packs.length - 1;
+                  
+                  const typeKey = Object.keys(PACKAGE_BADGES).find(
+                    k => k.toLowerCase() === pack.type.trim().toLowerCase()
+                  );
+                  const shortCode = typeKey ? PACKAGE_BADGES[typeKey].code : pack.type;
+                  
+                  return `
+                    <div class="pack-card ${isBestValue ? 'best-value' : ''}">
+                      ${isBestValue ? '<div class="best-value-ribbon"><svg style="width:7px;height:7px;margin-right:3px;fill:currentColor;" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>BEST VALUE</div>' : ''}
+                      <div class="pack-weight-type">${formattedW} (${shortCode})</div>
+                      <div class="pack-price-large">${formattedP}</div>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            </td>
+          </tr>
+        `;
+      });
+
+      html += `
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
   });
+
+  if (!footerInjected) {
+    html += footerGuideHTML;
+  }
+  
+  html += bottomBarHTML;
 
   html += `
   </div>
