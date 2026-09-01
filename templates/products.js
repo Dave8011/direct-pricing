@@ -48,7 +48,7 @@ const generateProductPages = (categories, monthYear, footerGuideHTML = '', botto
 
     if (catKey === 'GROCERY - HAMPERS AND GIFTING') {
       html += `
-        <div class="category-section" style="background: transparent; border: none; box-shadow: none;">
+        <div class="category-section" style="page-break-before: always; background: transparent; border: none; box-shadow: none;">
           <div class="cat-header" style="margin-bottom: 16px; border-radius: 8px;">
             <div class="cat-title">${displayName}</div>
             <div class="cat-sub">${subtext}</div>
