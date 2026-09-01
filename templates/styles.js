@@ -712,8 +712,8 @@ const getStyles = () => `
 
   .hamper-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
     padding: 0 4px 16px 4px;
   }
 
@@ -721,7 +721,7 @@ const getStyles = () => `
     background: linear-gradient(135deg, #ffffff 0%, #fafcfa 100%);
     border: 1px solid #d5e6db;
     border-radius: 12px;
-    padding: 16px 20px;
+    padding: 12px 16px;
     display: flex;
     flex-direction: column;
     box-shadow: 0 6px 16px rgba(19,66,38,0.04), 0 2px 4px rgba(19,66,38,0.02);
@@ -746,7 +746,7 @@ const getStyles = () => `
     font-size: 16.5px;
     font-weight: 700;
     color: #0f361f;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
     line-height: 1.25;
     display: flex;
     align-items: center;
@@ -759,8 +759,8 @@ const getStyles = () => `
     font-weight: 500;
     line-height: 1.55;
     flex-grow: 1;
-    margin-bottom: 14px;
-    padding-bottom: 14px;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
     border-bottom: 1px dashed #dce8e0;
   }
 
