@@ -717,6 +717,20 @@ const getStyles = () => `
     padding: 0 4px 16px 4px;
   }
 
+  .hamper-grid.full-width {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .hamper-grid.full-width .hamper-card {
+    padding: 14px 20px;
+  }
+
+  .hamper-grid.full-width .hamper-contents {
+    font-size: 12px;
+    line-height: 1.6;
+  }
+
   .hamper-card {
     background: linear-gradient(135deg, #ffffff 0%, #fafcfa 100%);
     border: 1px solid #d5e6db;
@@ -788,6 +802,17 @@ const getStyles = () => `
     color: #134226;
     line-height: 1;
     text-shadow: 0 1px 1px rgba(0,0,0,0.05);
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+  }
+
+  .hamper-price-gst {
+    font-size: 8.5px;
+    font-weight: 700;
+    color: #4f735c;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
   }
 `;
 

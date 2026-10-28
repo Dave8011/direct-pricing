@@ -25,10 +25,13 @@ function parseCSVLine(line) {
 }
 
 /**
- * Parses CSV file into structured category -> product -> packs hierarchy
+ * Parses CSV file or string into structured category -> product -> packs hierarchy
  */
-function parseCSV(filePath) {
-  const fileContent = fs.readFileSync(filePath, 'utf8');
+function parseCSV(input) {
+  let fileContent = input;
+  if (typeof input === 'string' && !input.includes('\n') && fs.existsSync(input)) {
+    fileContent = fs.readFileSync(input, 'utf8');
+  }
   const lines = fileContent.split(/\r?\n/).filter(line => line.trim().length > 0);
 
   if (lines.length === 0) return {};
@@ -85,7 +88,73 @@ function parseCSV(filePath) {
   return sortedCategories;
 }
 
+/**
+ * Parses D-gift-transpo CSV where:
+ * - Col A (index 0) = Products contained in the box
+ * - Col B (index 1) = Box Name
+ * - Col J (index 9) = Price
+ */
+function parseGiftTranspoCSV(input) {
+  if (!input) return [];
+  let fileContent = input;
+  if (typeof input === 'string' && !input.includes('\n') && fs.existsSync(input)) {
+    fileContent = fs.readFileSync(input, 'utf8');
+  }
+
+  const lines = fileContent.split(/\r?\n/).filter(line => line.trim().length > 0);
+  if (lines.length === 0) return [];
+
+  const rows = lines.map(parseCSVLine);
+  if (rows.length === 0) return [];
+
+  // Detect header row
+  let startIndex = 0;
+  const firstRow = rows[0];
+  const colA = (firstRow[0] || '').toLowerCase();
+  const colB = (firstRow[1] || '').toLowerCase();
+  const colJ = (firstRow[9] || '').toLowerCase();
+
+  const isHeader = colA.includes('product') || colA.includes('contain') ||
+                   colB.includes('box') || colB.includes('name') || colB.includes('sku') ||
+                   colJ.includes('price') || colJ.includes('sp') ||
+                   (firstRow[9] && isNaN(parseFloat(firstRow[9].replace(/[^0-9.]/g, ''))));
+
+  if (isHeader) {
+    startIndex = 1;
+  }
+
+  const items = [];
+  for (let i = startIndex; i < rows.length; i++) {
+    const row = rows[i];
+    if (row.length < 2) continue;
+
+    const contents = row[0] ? row[0].trim() : '';
+    const boxName = row[1] ? row[1].trim() : '';
+    const sku = (row.length > 2 && row[2]) ? row[2].trim() : '';
+    const weight = (row.length > 3 && row[3]) ? row[3].trim() : '';
+    const price = (row.length > 9 && row[9]) ? row[9].trim() : '';
+
+    if (!boxName && !contents) continue;
+
+    const lowerName = boxName.toLowerCase();
+    const type = lowerName.includes('basket') ? 'Gift Basket' : (lowerName.includes('hamper') ? 'Gift Hamper' : 'Gift Box');
+
+    items.push({
+      boxName: boxName || 'Gift Box',
+      contents: contents,
+      sku: sku,
+      weight: weight,
+      price: price,
+      type: type
+    });
+  }
+
+  return items;
+}
+
 module.exports = {
   parseCSV,
-  parseCSVLine
+  parseCSVLine,
+  parseGiftTranspoCSV
 };
+

@@ -1,8 +1,10 @@
-let parseCSV, renderFullHTML, chromium, formidable;
+let parseCSV, parseGiftTranspoCSV, renderFullHTML, chromium, formidable;
 let initError = null;
 
 try {
-  parseCSV = require('../parser').parseCSV;
+  const parser = require('../parser');
+  parseCSV = parser.parseCSV;
+  parseGiftTranspoCSV = parser.parseGiftTranspoCSV;
   renderFullHTML = require('../templates/page').renderFullHTML;
   formidable = require('formidable').formidable; // v3 uses .formidable
 } catch (e) {
@@ -57,7 +59,7 @@ module.exports = async function handler(req, res) {
     if (Array.isArray(monthYear)) monthYear = monthYear[0];
     if (!monthYear || monthYear.trim() === '') monthYear = 'JULY 2026'; // Default
 
-    // 1. Fetch CSV from Google Sheets
+    // 1. Fetch CSV from Google Sheets (Main price list)
     const SHEET_ID = '1nmTKuazMi-DvA8r4UhZYPGCqMWMsCE4zS3EW0CnQfn8';
     const SHEET_NAME = 'Driect-pdf';
     const csvUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${SHEET_NAME}`;
@@ -67,25 +69,39 @@ module.exports = async function handler(req, res) {
       throw new Error(`Failed to fetch Google Sheet: ${sheetResponse.statusText}`);
     }
     const csvText = await sheetResponse.text();
-
-    // 2. Parse CSV text directly (modify parser to handle string instead of file)
-    // Wait, parseCSV expects a filePath. We need to create a temporary file or modify parser.
-    const os = require('os');
-    const fs = require('fs');
-    const path = require('path');
-    const tempCsvPath = path.join(os.tmpdir(), `temp_${Date.now()}.csv`);
-    fs.writeFileSync(tempCsvPath, csvText);
-
-    const categories = parseCSV(tempCsvPath);
-    // Clean up
-    if (fs.existsSync(tempCsvPath)) fs.unlinkSync(tempCsvPath);
+    const categories = parseCSV(csvText);
 
     if (Object.keys(categories).length === 0) {
       return res.status(400).json({ error: 'Google Sheet CSV is empty or invalid' });
     }
 
-    // 2. Render HTML
-    const htmlContent = renderFullHTML(categories, monthYear);
+    // 2. Fetch New Gifting Range from Google Sheet (D-gift-transpo)
+    const GIFT_SHEET_ID = '1XJJUT2KUSZH04zu1ErPYY1_-3UV_qoWCKmUHqVtv_sI';
+    const GIFT_GID = '1519148830';
+    const GIFT_SHEET_NAME = 'D-gift-transpo';
+    const giftCsvUrl = `https://docs.google.com/spreadsheets/d/${GIFT_SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(GIFT_SHEET_NAME)}`;
+
+    let newGiftingHampers = [];
+    try {
+      let giftResponse = await fetch(giftCsvUrl);
+      if (!giftResponse.ok) {
+        // Fallback to export endpoint
+        const exportGiftUrl = `https://docs.google.com/spreadsheets/d/${GIFT_SHEET_ID}/export?format=csv&gid=${GIFT_GID}`;
+        giftResponse = await fetch(exportGiftUrl);
+      }
+
+      if (giftResponse.ok) {
+        const giftCsvText = await giftResponse.text();
+        newGiftingHampers = parseGiftTranspoCSV(giftCsvText);
+      } else {
+        console.warn(`[GIFTING SHEET] Failed with status ${giftResponse.status}`);
+      }
+    } catch (giftErr) {
+      console.warn('Error fetching new gifting hampers sheet:', giftErr);
+    }
+
+    // 3. Render HTML
+    const htmlContent = renderFullHTML(categories, monthYear, newGiftingHampers);
 
     // Dynamic import for puppeteer-core and chromium because they are ES Modules
     const puppeteer = await import('puppeteer-core').then(m => m.default || m);

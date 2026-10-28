@@ -4,13 +4,14 @@ const { formatWeight, formatPrice, getLogoDataUrl } = require('../utils/helpers'
 /**
  * Renders product listing tables with fixed 3-column pack grid slots for pixel-perfect alignment
  */
-const generateProductPages = (categories, monthYear, footerGuideHTML = '', bottomBarHTML = '') => {
+const generateProductPages = (categories, monthYear, footerGuideHTML = '', bottomBarHTML = '', newGiftingHampers = []) => {
   const monthYearCapitalized = monthYear
     .split(' ')
     .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
     .join(' ');
 
   const hampersBannerBase64 = getLogoDataUrl('hampers-banner.jpg');
+  const hamper2BannerBase64 = getLogoDataUrl('hamper-2.png');
 
   let html = `
   <!-- Product Listing Page -->
@@ -80,7 +81,7 @@ const generateProductPages = (categories, monthYear, footerGuideHTML = '', botto
               <div class="hamper-contents">${subName}</div>
               <div class="hamper-footer">
                 <div class="hamper-pack">Total Grams ${rawWeight} • ${pack.type}</div>
-                <div class="hamper-price">${formattedP}</div>
+                <div class="hamper-price">${formattedP} <span class="hamper-price-gst">incl. GST</span></div>
               </div>
             </div>
         `;
@@ -173,6 +174,51 @@ const generateProductPages = (categories, monthYear, footerGuideHTML = '', botto
     html += footerGuideHTML;
   }
   
+  // Render New Gifting Range from D-gift-transpo if present
+  if (newGiftingHampers && newGiftingHampers.length > 0) {
+    html += `
+      <div class="category-section" style="margin-top: 20px; background: transparent; border: none; box-shadow: none;">
+        <div class="cat-header" style="margin-bottom: 16px; border-radius: 8px;">
+          <div class="cat-title">Exclusive Gifting & Hampers</div>
+          <div class="cat-sub">Thoughtfully curated luxury gift collections for celebrations</div>
+        </div>
+        
+        <div style="margin-bottom: 16px; border-radius: 8px; overflow: hidden; height: 160px;">
+          <img src="${hamper2BannerBase64}" style="width: 100%; height: 100%; object-fit: cover; display: block;" />
+        </div>
+        
+        <div class="hamper-grid full-width">
+    `;
+
+    newGiftingHampers.forEach((item) => {
+      const mainName = item.boxName || 'Gift Box';
+      const subName = item.contents || '';
+      const formattedP = formatPrice(item.price);
+      const rawWeight = item.weight ? (parseFloat(item.weight) * 1000).toFixed(0) : '';
+      const weightStr = rawWeight && !isNaN(rawWeight) && Number(rawWeight) > 0 ? `Total Grams ${rawWeight} • ` : '';
+      const packLabel = `${weightStr}${item.type || 'Gift Box'}`;
+
+      html += `
+          <div class="hamper-card">
+            <div class="hamper-title">
+              <svg style="width: 14px; height: 14px; margin-right: 6px; fill: #d4af37;" viewBox="0 0 24 24"><path d="M22,12l-4.6,1.4l1.4,4.6l-4.6-1.4L12,22l-1.4-4.6L6,18.8l1.4-4.6L2.8,12l4.6-1.4L6,6l4.6,1.4L12,2.8l1.4,4.6L18,6l-1.4,4.6L22,12z"/></svg>
+              ${mainName}
+            </div>
+            <div class="hamper-contents">${subName}</div>
+            <div class="hamper-footer">
+              <div class="hamper-pack">${packLabel}</div>
+              <div class="hamper-price">${formattedP} <span class="hamper-price-gst">incl. GST</span></div>
+            </div>
+          </div>
+      `;
+    });
+
+    html += `
+        </div>
+      </div>
+    `;
+  }
+
   html += bottomBarHTML;
 
   html += `
