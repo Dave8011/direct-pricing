@@ -1,7 +1,17 @@
 const { getLogoDataUrl } = require('../utils/helpers');
 
-const generateCoverPage = (monthYear) => {
+const generateCoverPage = (monthYear, pdfType = 'complete') => {
   const formattedMonthYear = monthYear.toUpperCase();
+
+  let priceListLabel = 'PRICE LIST';
+  let subtitleText = 'FRESHLY MILLED FLOUR "ATTA" &nbsp;&bull;&nbsp; GRAINS &nbsp;&bull;&nbsp; MILLETS &nbsp;&bull;&nbsp; DALS & LENTILS &nbsp;&bull;&nbsp; SPICES & MASALAS &nbsp;&bull;&nbsp; SEEDS &nbsp;&bull;&nbsp; DRY FRUITS';
+
+  if (pdfType === 'hampers') {
+    priceListLabel = 'GIFT CATALOG';
+    subtitleText = 'EXCLUSIVE GIFT HAMPERS &nbsp;&bull;&nbsp; CURATED LUXURY BOXES &nbsp;&bull;&nbsp; FESTIVE CELEBRATIONS &nbsp;&bull;&nbsp; CORPORATE GIFTING';
+  } else if (pdfType === 'normal') {
+    priceListLabel = 'GROCERY LIST';
+  }
 
   // Load logo data URLs
   const pureTreeLogo = getLogoDataUrl('logo.jpg');
@@ -25,7 +35,7 @@ const generateCoverPage = (monthYear) => {
         <span class="organic-pill" style="position: absolute; left: 50%; transform: translateX(-50%);">CERTIFIED ORGANIC</span>
         <div style="display: flex; flex-direction: column; align-items: flex-end;">
           <div class="price-list-box">
-            <div class="pl-small">PRICE LIST</div>
+            <div class="pl-small">${priceListLabel}</div>
             <h2 class="pl-large">${formattedMonthYear}</h2>
           </div>
           <div style="font-size: 12.5px; font-weight: 800; color: #134226; text-align: right; margin-top: 8px; line-height: 1.3;">
@@ -46,7 +56,7 @@ const generateCoverPage = (monthYear) => {
       </div>
       <div>
         <p class="cover-subtitle">
-          FRESHLY MILLED FLOUR "ATTA" &nbsp;&bull;&nbsp; GRAINS &nbsp;&bull;&nbsp; MILLETS &nbsp;&bull;&nbsp; DALS & LENTILS &nbsp;&bull;&nbsp; SPICES & MASALAS &nbsp;&bull;&nbsp; SEEDS &nbsp;&bull;&nbsp; DRY FRUITS
+          ${subtitleText}
         </p>
       </div>
     </div>

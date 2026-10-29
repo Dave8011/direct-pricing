@@ -4,7 +4,7 @@ const { formatWeight, formatPrice, getLogoDataUrl } = require('../utils/helpers'
 /**
  * Renders product listing tables with fixed 3-column pack grid slots for pixel-perfect alignment
  */
-const generateProductPages = (categories, monthYear, footerGuideHTML = '', bottomBarHTML = '', newGiftingHampers = []) => {
+const generateProductPages = (categories, monthYear, footerGuideHTML = '', bottomBarHTML = '', newGiftingHampers = [], pdfType = 'complete') => {
   const monthYearCapitalized = monthYear
     .split(' ')
     .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
@@ -13,12 +13,19 @@ const generateProductPages = (categories, monthYear, footerGuideHTML = '', botto
   const hampersBannerBase64 = getLogoDataUrl('hampers-banner.jpg');
   const hamper2BannerBase64 = getLogoDataUrl('hamper-2.png');
 
+  let listTitle = 'Pure Tree <sup>®</sup> Organic Price List';
+  if (pdfType === 'hampers') {
+    listTitle = 'Pure Tree <sup>®</sup> Luxury Gifting & Hampers';
+  } else if (pdfType === 'normal') {
+    listTitle = 'Pure Tree <sup>®</sup> Organic Products Price List';
+  }
+
   let html = `
   <!-- Product Listing Page -->
   <div class="page page-content">
     <div class="list-header">
       <div>
-        <div class="lh-title">Pure Tree <sup>®</sup> Organic Price List</div>
+        <div class="lh-title">${listTitle}</div>
         <div style="font-size: 11px; font-weight: 700; color: #134226; margin-top: 2px;">
           Effective Month: ${monthYearCapitalized}
         </div>
@@ -32,6 +39,7 @@ const generateProductPages = (categories, monthYear, footerGuideHTML = '', botto
 
   const categoryKeys = Object.keys(categories);
   let footerInjected = false;
+  let standardSectionsCount = 0;
 
   categoryKeys.forEach((catKey) => {
     const displayName = CATEGORY_DISPLAY_NAMES[catKey] || catKey;
@@ -41,15 +49,18 @@ const generateProductPages = (categories, monthYear, footerGuideHTML = '', botto
 
     if (productNames.length === 0) return;
 
-    // Inject footer guide before Hampers
+    // Inject footer guide before Hampers (only if not hampers-only mode)
     if (catKey === 'GROCERY - HAMPERS AND GIFTING' && !footerInjected) {
-      html += footerGuideHTML;
+      if (pdfType !== 'hampers') {
+        html += footerGuideHTML;
+      }
       footerInjected = true;
     }
 
     if (catKey === 'GROCERY - HAMPERS AND GIFTING') {
+      const pageBreakStyle = standardSectionsCount > 0 ? 'page-break-before: always;' : '';
       html += `
-        <div class="category-section" style="page-break-before: always; background: transparent; border: none; box-shadow: none;">
+        <div class="category-section" style="${pageBreakStyle} background: transparent; border: none; box-shadow: none;">
           <div class="cat-header" style="margin-bottom: 16px; border-radius: 8px;">
             <div class="cat-title">${displayName}</div>
             <div class="cat-sub">${subtext}</div>
@@ -167,10 +178,11 @@ const generateProductPages = (categories, monthYear, footerGuideHTML = '', botto
           </table>
         </div>
       `;
+      standardSectionsCount++;
     }
   });
 
-  if (!footerInjected) {
+  if (!footerInjected && pdfType !== 'hampers') {
     html += footerGuideHTML;
   }
   

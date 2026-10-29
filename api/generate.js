@@ -28,7 +28,7 @@ module.exports = async function handler(req, res) {
 
   try {
     let body = {};
-    if (req.headers['content-type'] === 'application/json') {
+    if (req.headers['content-type'] && req.headers['content-type'].includes('application/json')) {
       try {
         const chunks = [];
         for await (const chunk of req) {
@@ -57,7 +57,13 @@ module.exports = async function handler(req, res) {
 
     let monthYear = body.monthYear;
     if (Array.isArray(monthYear)) monthYear = monthYear[0];
-    if (!monthYear || monthYear.trim() === '') monthYear = 'JULY 2026'; // Default
+    if (!monthYear || monthYear.trim() === '') monthYear = 'OCTOBER 2026'; // Default
+
+    let type = body.type || 'complete';
+    if (Array.isArray(type)) type = type[0];
+    if (!['complete', 'hampers', 'normal'].includes(type)) {
+      type = 'complete';
+    }
 
     // 1. Fetch CSV from Google Sheets (Main price list)
     const SHEET_ID = '1nmTKuazMi-DvA8r4UhZYPGCqMWMsCE4zS3EW0CnQfn8';
@@ -69,39 +75,53 @@ module.exports = async function handler(req, res) {
       throw new Error(`Failed to fetch Google Sheet: ${sheetResponse.statusText}`);
     }
     const csvText = await sheetResponse.text();
-    const categories = parseCSV(csvText);
+    const rawCategories = parseCSV(csvText);
 
-    if (Object.keys(categories).length === 0) {
-      return res.status(400).json({ error: 'Google Sheet CSV is empty or invalid' });
+    let categories = {};
+    if (type === 'hampers') {
+      if (rawCategories['GROCERY - HAMPERS AND GIFTING']) {
+        categories['GROCERY - HAMPERS AND GIFTING'] = rawCategories['GROCERY - HAMPERS AND GIFTING'];
+      }
+    } else if (type === 'normal') {
+      categories = { ...rawCategories };
+      delete categories['GROCERY - HAMPERS AND GIFTING'];
+    } else {
+      categories = rawCategories;
     }
 
-    // 2. Fetch New Gifting Range from Google Sheet (D-gift-transpo)
-    const GIFT_SHEET_ID = '1XJJUT2KUSZH04zu1ErPYY1_-3UV_qoWCKmUHqVtv_sI';
-    const GIFT_GID = '1519148830';
-    const GIFT_SHEET_NAME = 'D-gift-transpo';
-    const giftCsvUrl = `https://docs.google.com/spreadsheets/d/${GIFT_SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(GIFT_SHEET_NAME)}`;
-
+    // 2. Fetch New Gifting Range from Google Sheet (D-gift-transpo) - only needed for complete and hampers
     let newGiftingHampers = [];
-    try {
-      let giftResponse = await fetch(giftCsvUrl);
-      if (!giftResponse.ok) {
-        // Fallback to export endpoint
-        const exportGiftUrl = `https://docs.google.com/spreadsheets/d/${GIFT_SHEET_ID}/export?format=csv&gid=${GIFT_GID}`;
-        giftResponse = await fetch(exportGiftUrl);
-      }
+    if (type !== 'normal') {
+      const GIFT_SHEET_ID = '1XJJUT2KUSZH04zu1ErPYY1_-3UV_qoWCKmUHqVtv_sI';
+      const GIFT_GID = '1519148830';
+      const GIFT_SHEET_NAME = 'D-gift-transpo';
+      const giftCsvUrl = `https://docs.google.com/spreadsheets/d/${GIFT_SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(GIFT_SHEET_NAME)}`;
 
-      if (giftResponse.ok) {
-        const giftCsvText = await giftResponse.text();
-        newGiftingHampers = parseGiftTranspoCSV(giftCsvText);
-      } else {
-        console.warn(`[GIFTING SHEET] Failed with status ${giftResponse.status}`);
+      try {
+        let giftResponse = await fetch(giftCsvUrl);
+        if (!giftResponse.ok) {
+          // Fallback to export endpoint
+          const exportGiftUrl = `https://docs.google.com/spreadsheets/d/${GIFT_SHEET_ID}/export?format=csv&gid=${GIFT_GID}`;
+          giftResponse = await fetch(exportGiftUrl);
+        }
+
+        if (giftResponse.ok) {
+          const giftCsvText = await giftResponse.text();
+          newGiftingHampers = parseGiftTranspoCSV(giftCsvText);
+        } else {
+          console.warn(`[GIFTING SHEET] Failed with status ${giftResponse.status}`);
+        }
+      } catch (giftErr) {
+        console.warn('Error fetching new gifting hampers sheet:', giftErr);
       }
-    } catch (giftErr) {
-      console.warn('Error fetching new gifting hampers sheet:', giftErr);
+    }
+
+    if (Object.keys(categories).length === 0 && newGiftingHampers.length === 0) {
+      return res.status(400).json({ error: 'Selected catalog data is empty or invalid' });
     }
 
     // 3. Render HTML
-    const htmlContent = renderFullHTML(categories, monthYear, newGiftingHampers);
+    const htmlContent = renderFullHTML(categories, monthYear, newGiftingHampers, type);
 
     // Dynamic import for puppeteer-core and chromium because they are ES Modules
     const puppeteer = await import('puppeteer-core').then(m => m.default || m);
@@ -136,8 +156,13 @@ module.exports = async function handler(req, res) {
     const pdfBuffer = Buffer.from(pdfUint8Array);
 
     // 5. Send PDF as response
+    const cleanMonth = (monthYear || 'Generated').trim().replace(/[^a-zA-Z0-9_-]/g, '_');
+    let typeSlug = 'Complete';
+    if (type === 'hampers') typeSlug = 'Gift_Hampers';
+    if (type === 'normal') typeSlug = 'Normal_Products';
+
     res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', 'attachment; filename="Pure_Tree_Price_List.pdf"');
+    res.setHeader('Content-Disposition', `attachment; filename="Pure_Tree_${typeSlug}_${cleanMonth}.pdf"`);
     res.setHeader('Content-Length', pdfBuffer.length);
     return res.end(pdfBuffer);
 
