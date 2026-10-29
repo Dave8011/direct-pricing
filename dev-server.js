@@ -30,6 +30,12 @@ const server = http.createServer(async (req, res) => {
   
   if (parsedUrl.pathname === '/api/generate') {
     try {
+      // Hot-reload: clear cache for non-node_modules files so changes reflect immediately
+      Object.keys(require.cache).forEach(key => {
+        if (!key.includes('node_modules')) {
+          delete require.cache[key];
+        }
+      });
       const handler = require('./api/generate');
       return await handler(req, res);
     } catch (err) {

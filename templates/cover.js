@@ -5,10 +5,14 @@ const generateCoverPage = (monthYear, pdfType = 'complete') => {
 
   let priceListLabel = 'PRICE LIST';
   let subtitleText = 'FRESHLY MILLED FLOUR "ATTA" &nbsp;&bull;&nbsp; GRAINS &nbsp;&bull;&nbsp; MILLETS &nbsp;&bull;&nbsp; DALS & LENTILS &nbsp;&bull;&nbsp; SPICES & MASALAS &nbsp;&bull;&nbsp; SEEDS &nbsp;&bull;&nbsp; DRY FRUITS';
+  let stat3Title = '🌱 144+ Products';
+  let stat3Sub = '450+ Packaging Options';
 
   if (pdfType === 'hampers') {
     priceListLabel = 'GIFT CATALOG';
     subtitleText = 'EXCLUSIVE GIFT HAMPERS &nbsp;&bull;&nbsp; CURATED LUXURY BOXES &nbsp;&bull;&nbsp; FESTIVE CELEBRATIONS &nbsp;&bull;&nbsp; CORPORATE GIFTING';
+    stat3Title = '🎁 25+ Curated Hampers';
+    stat3Sub = 'Festive Boxes & Gift Baskets';
   } else if (pdfType === 'normal') {
     priceListLabel = 'GROCERY LIST';
   }
@@ -71,11 +75,12 @@ const generateCoverPage = (monthYear, pdfType = 'complete') => {
         <div class="stat-sub">Mon–Sat, 9:00 AM – 6:00 PM</div>
       </div>
       <div class="stat-block">
-        <div class="stat-title">🌱 144+ Products</div>
-        <div class="stat-sub">450+ Packaging Options</div>
+        <div class="stat-title">${stat3Title}</div>
+        <div class="stat-sub">${stat3Sub}</div>
       </div>
     </div>
 
+    ${pdfType !== 'hampers' ? `
     <div class="wheat-bg-section">
       <div style="flex: 1.1;">
         <h3 class="section-h3">🌾 WHAT DOES FRESHLY MILLED MEAN?</h3>
@@ -138,6 +143,7 @@ const generateCoverPage = (monthYear, pdfType = 'complete') => {
         </table>
       </div>
     </div>
+    ` : ''}
 
     <div class="bottom-section">
       <!-- Left Column -->
