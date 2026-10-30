@@ -27,6 +27,7 @@ const generateCoverPage = (monthYear, pdfType = 'complete') => {
   const foodchainLogo = getLogoDataUrl('foodchain.png');
   const socialLogo = getLogoDataUrl('social-medial-logos.png');
   const iosplLogo = getLogoDataUrl('iospl-logo.png');
+  const giftBoxBanner = getLogoDataUrl('giftboxbanner.png');
 
   return `
   <!-- Cover Page (Page 1) -->
@@ -258,15 +259,22 @@ const generateCoverPage = (monthYear, pdfType = 'complete') => {
         </div>
 
         <!-- Footer company info -->
-        <div style="text-align: center; margin-top: auto;">
-          <img src="${iosplLogo}" style="height: 24px; width: auto; object-fit: contain; margin-bottom: 2px;" alt="Infinite Online Shopping" /><br>
-          <strong style="font-size: 10px; color: #134226;">Infinite Online Shopping Pvt. Ltd.</strong><br>
-          <div style="font-size: 8.5px; color: #2f2f2fff; line-height: 1.3;">
+        <div style="text-align: center; ${pdfType === 'hampers' ? 'margin-top: 8px;' : 'margin-top: auto;'}">
+          <img src="${iosplLogo}" style="height: 22px; width: auto; object-fit: contain; margin-bottom: 2px;" alt="Infinite Online Shopping" /><br>
+          <strong style="font-size: 9.5px; color: #134226;">Infinite Online Shopping Pvt. Ltd.</strong><br>
+          <div style="font-size: 8px; color: #2f2f2fff; line-height: 1.25;">
             Laxmi Industrial Estate, Lower Parel, Mumbai 400 013, Maharashtra.
           </div>
         </div>
       </div>
     </div>
+
+    ${pdfType === 'hampers' && giftBoxBanner ? `
+    <!-- Full Width Cover Banner Covering Space Below -->
+    <div style="flex: 0 0 70mm; width: 100%; height: 70mm; overflow: hidden; display: block;">
+      <img src="${giftBoxBanner}" style="width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;" alt="Pure Tree Luxury Gifting" />
+    </div>
+    ` : ''}
   </div>
   `;
 };
