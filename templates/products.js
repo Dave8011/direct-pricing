@@ -66,8 +66,8 @@ const generateProductPages = (categories, monthYear, footerGuideHTML = '', botto
             <div class="cat-sub">${subtext}</div>
           </div>
           
-          <div style="margin-bottom: 16px; border-radius: 8px; overflow: hidden; height: 160px;">
-            <img src="${hampersBannerBase64}" style="width: 100%; height: 100%; object-fit: cover; display: block;" />
+          <div style="margin-bottom: 16px; border-radius: 8px; overflow: hidden; height: 380px;">
+            <img src="${hampersBannerBase64}" style="width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;" />
           </div>
           
           <div class="hamper-grid">
