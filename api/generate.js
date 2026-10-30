@@ -131,29 +131,49 @@ module.exports = async function handler(req, res) {
     // @sparticuz/chromium automatically manages the Chromium binary download/execution
     const executablePath = await chromium.executablePath();
     
-    const browser = await puppeteer.launch({
-      args: chromium.args,
-      defaultViewport: chromium.defaultViewport,
-      executablePath: executablePath || process.env.PUPPETEER_EXECUTABLE_PATH,
-      headless: chromium.headless,
-    });
+    let browser = null;
+    let pdfBuffer;
 
-    const page = await browser.newPage();
-    
-    // Set HTML content directly in memory (no temp files needed)
-    await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
+    try {
+      browser = await puppeteer.launch({
+        args: chromium.args,
+        defaultViewport: chromium.defaultViewport,
+        executablePath: executablePath || process.env.PUPPETEER_EXECUTABLE_PATH,
+        headless: chromium.headless,
+      });
 
-    // 4. Generate PDF buffer (Puppeteer returns Uint8Array in newer versions)
-    const pdfUint8Array = await page.pdf({
-      format: 'A4',
-      printBackground: true,
-      margin: { top: '0px', right: '0px', bottom: '0px', left: '0px' }
-    });
+      const page = await browser.newPage();
+      page.setDefaultNavigationTimeout(60000);
+      page.setDefaultTimeout(60000);
+      
+      // Set HTML content directly in memory (no temp files needed)
+      // Use domcontentloaded + load instead of networkidle0 so keepalive font connections don't block
+      await page.setContent(htmlContent, { 
+        waitUntil: ['domcontentloaded', 'load'],
+        timeout: 60000
+      });
 
-    await browser.close();
+      // Wait for Google Fonts to be ready, with a 5-second maximum race to avoid hanging
+      await Promise.race([
+        page.evaluate(() => document.fonts.ready),
+        new Promise(resolve => setTimeout(resolve, 5000))
+      ]);
 
-    // Ensure it's a Node Buffer so Vercel doesn't stringify it
-    const pdfBuffer = Buffer.from(pdfUint8Array);
+      // 4. Generate PDF buffer (Puppeteer returns Uint8Array in newer versions)
+      const pdfUint8Array = await page.pdf({
+        format: 'A4',
+        printBackground: true,
+        margin: { top: '0px', right: '0px', bottom: '0px', left: '0px' },
+        timeout: 60000
+      });
+
+      // Ensure it's a Node Buffer so Vercel doesn't stringify it
+      pdfBuffer = Buffer.from(pdfUint8Array);
+    } finally {
+      if (browser) {
+        await browser.close().catch(() => {});
+      }
+    }
 
     // 5. Send PDF as response
     const cleanMonth = (monthYear || 'Generated').trim().replace(/[^a-zA-Z0-9_-]/g, '_');
