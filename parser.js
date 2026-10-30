@@ -107,20 +107,43 @@ function parseGiftTranspoCSV(input) {
   const rows = lines.map(parseCSVLine);
   if (rows.length === 0) return [];
 
-  // Detect header row
+  // Detect header row and resolve column mapping dynamically
   let startIndex = 0;
   const firstRow = rows[0];
-  const colA = (firstRow[0] || '').toLowerCase();
-  const colB = (firstRow[1] || '').toLowerCase();
-  const colJ = (firstRow[9] || '').toLowerCase();
+  const headers = firstRow.map(h => (h || '').toLowerCase().trim());
 
+  const colA = headers[0] || '';
+  const colB = headers[1] || '';
   const isHeader = colA.includes('product') || colA.includes('contain') ||
-                   colB.includes('box') || colB.includes('name') || colB.includes('sku') ||
-                   colJ.includes('price') || colJ.includes('sp') ||
-                   (firstRow[9] && isNaN(parseFloat(firstRow[9].replace(/[^0-9.]/g, ''))));
+                   colB.includes('box') || colB.includes('name') ||
+                   headers.some(h => h.includes('sku') || h.includes('sp') || h.includes('price'));
+
+  // Default fallback column indexes: Col A=0, Col B=1, Col C=2, Col D=3, Col K=10 (or Col J=9)
+  let colContents = 0;
+  let colBoxName = 1;
+  let colSku = 2;
+  let colWeight = 3;
+  let colPrice = 10;
 
   if (isHeader) {
     startIndex = 1;
+    const findCol = (predicate) => headers.findIndex(predicate);
+
+    const cBox = findCol(h => h.includes('box') || (h.includes('name') && !h.includes('prod')));
+    if (cBox !== -1) colBoxName = cBox;
+
+    const cProd = findCol(h => h.includes('product') || h.includes('contain') || h.includes('item'));
+    if (cProd !== -1) colContents = cProd;
+
+    const cSku = findCol(h => h.includes('sku'));
+    if (cSku !== -1) colSku = cSku;
+
+    const cWeight = findCol(h => h.includes('weight'));
+    if (cWeight !== -1) colWeight = cWeight;
+
+    // Matches 'Direct SP / Calculated cost', 'Selling Price', 'SP', 'Price'
+    const cPrice = findCol(h => (h.includes('sp') || h.includes('selling') || h.includes('price')) && !h.includes('basic'));
+    if (cPrice !== -1) colPrice = cPrice;
   }
 
   const items = [];
@@ -128,11 +151,13 @@ function parseGiftTranspoCSV(input) {
     const row = rows[i];
     if (row.length < 2) continue;
 
-    const contents = row[0] ? row[0].trim() : '';
-    const boxName = row[1] ? row[1].trim() : '';
-    const sku = (row.length > 2 && row[2]) ? row[2].trim() : '';
-    const weight = (row.length > 3 && row[3]) ? row[3].trim() : '';
-    const price = (row.length > 9 && row[9]) ? row[9].trim() : '';
+    const contents = (row[colContents] || '').trim();
+    const boxName = (row[colBoxName] || '').trim();
+    const sku = (row[colSku] || '').trim();
+    const weight = (row[colWeight] || '').trim();
+    let price = (row[colPrice] || '').trim();
+    if (!price && row[10]) price = row[10].trim();
+    if (!price && row[9]) price = row[9].trim();
 
     if (!boxName && !contents) continue;
 
